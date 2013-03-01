@@ -1,0 +1,51 @@
+<head>
+  <title>Echapson-M</title>
+</head>
+
+<body>
+  {{> app}} {{! Application}}
+  {{> controls}} {{! Just for development}}
+</body>
+
+
+<template name="app">
+  <div class="app">
+    <div class="chrome ani {{page}}">
+
+      <div class="map">
+        <div class="mcan"></div> {{! Google Maps}}
+        {{> trail}}
+      </div> 
+
+      <div class="aprop">
+        {{> aprop}}
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<template name="trail">
+  {{#if section "trail"}}
+    <div class="tr-wrap">
+      <div class="tr ani {{fx}}">
+        <div class="tc">[TRAIL-A]</div>
+        <div id="p0" class="tn">[TRAIL-B]</div>
+      </div>
+    </div>
+  {{/if}}
+</template>
+
+
+<template name="aprop">
+  {{#if section "aprop"}}
+    <div class="aprop-content">[A PROPOS]</div>
+  {{/if}}
+</template>
+
+
+<template name="controls">
+  <div id="ctl">
+    <input id="path" value=""/>
+  </div>
+</template>

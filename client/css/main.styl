@@ -1,0 +1,152 @@
+// Echapson v1
+
+global-reset()
+
+// VARIABLES
+// --------
+
+// Colors
+$app_bg_color = #aaa
+
+// Baseline grid
+$basefont = 16px
+$baseline = 1.32em
+
+// Trail card
+$heightCard = 88%
+$dur = .4s
+
+
+// Main Blocks
+// --------
+
+html, body 
+  width 100%
+  height 100%
+  font-sans-serif(normal, $basefont, $baseline, "Open Sans")
+  overflow: auto
+
+.app 
+  position absolute
+  left 0
+  top 0
+  width 100%
+  height 100%
+  overflow hidden
+
+.chrome 
+  position relative
+  left -100%
+  top 0
+  width 200%
+  height 100%
+  background-color $app_bg_color
+  transition(left .8s)
+
+  &.in-aprop
+    left 0
+
+.map, .aprop 
+  position absolute
+  left 0
+  top 0
+  width 50%
+  height 100%
+
+.map 
+  left 50%
+
+.mcan 
+  width 100%
+  height 100%
+
+.aprop 
+  background-color rgba(143,236,216,.4)
+
+
+.tr-wrap 
+  position absolute
+  right 1.6em
+  top 1.6em
+  width 36%
+  height $heightCard
+
+.tr
+  position relative
+  top 0
+  width 100%
+  height 100%
+  animation(stage .8s)
+
+.tc, .tn 
+  position absolute
+  z-index 2
+  width 100%
+  height 100%
+  background-color #fff
+  box-shadow(0 4px 8px #888)
+
+.tn 
+  z-index 1
+  background-color red
+
+.tr.fx1
+  .tc
+    animation(lift $dur)
+    animation-fill-mode(forwards)
+  .tn
+    opacity 0
+    animation(surface $dur)
+    animation-delay(.08s)
+    animation-fill-mode(forwards)
+
+// .tr.fx2
+//   .tc
+
+//   .tn
+
+
+// Keyframes
+// --------
+
+@keyframes lift
+  0%
+    opacity 1
+    transform(translateX(0))
+  100%
+    z-index 1
+    opacity 0
+    transform(translateX(100%))
+
+
+@keyframes surface
+  0%
+    z-index 2
+    opacity 0.4
+    transform(scale(0.98))
+  100%
+    opacity 1
+    transform(scale(1))
+
+
+@keyframes stage
+  0% 
+    opacity 0
+    transform(translateX(1.6em))
+  100%
+    opacity 1
+    transform(translateX(O))
+
+// animation-play-state: running;
+// animation-fill-mode: forwards;
+
+// Extras
+// --------
+
+#ctl 
+  position absolute
+  left 1.6em
+  top 1.6em
+  z-index 18
+
+
