@@ -1,4 +1,15 @@
 // Echapson v1
+// 
+// animation: [
+//    <animation-name>, <animation-timing-function>, <animation-delay>, 
+//    <animation-iteration-count>, <animation-direction>, <animation-fill-mode>
+//    ], [apply another animation]
+//            
+// transition: [ 
+//    <transition-property> <transition-duration> 
+//    <transition-timing-function> <transition-delay> 
+//    ], [comma separates multiple transitions]
+
 
 global-reset()
 
@@ -17,7 +28,14 @@ $heightCard = 88%
 $dur = .4s
 
 
-// Main Blocks
+// EXTRAS
+// --------
+
+.cur 
+  cursor pointer
+
+
+// LAYOUT
 // --------
 
 html, body 
@@ -40,11 +58,11 @@ html, body
   top 0
   width 200%
   height 100%
-  background-color $app_bg_color
   transition(left .8s)
 
   &.in-aprop
-    left 0
+    // TODO: Precisely check the size of the div.
+    left -10%
 
 .map, .aprop 
   position absolute
@@ -56,19 +74,26 @@ html, body
 .map 
   left 50%
 
-.mcan 
+#mcan 
   width 100%
   height 100%
 
-.aprop 
-  background-color rgba(143,236,216,.4)
+.pop 
+  position absolute
+  left 1.6em
+  top 3.2em
+  z-index 4
+  background-color red
 
+
+// TRAIL
+// --------
 
 .tr-wrap 
   position absolute
   right 1.6em
   top 1.6em
-  width 36%
+  width 32%
   height $heightCard
 
 .tr
@@ -76,7 +101,7 @@ html, body
   top 0
   width 100%
   height 100%
-  animation(stage .8s)
+  animation(stage_rtl .8s)
 
 .tc, .tn 
   position absolute
@@ -90,26 +115,63 @@ html, body
   z-index 1
   background-color red
 
+.surface 
+  opacity 0
+  animation(surface $dur)
+  animation-delay(.08s)
+  animation-fill-mode(forwards)
+
+.slide
+  animation(slide $dur)
+  animation-fill-mode(forwards)
+
 .tr.fx1
   .tc
-    animation(lift $dur)
-    animation-fill-mode(forwards)
+    @extends .slide
   .tn
-    opacity 0
-    animation(surface $dur)
-    animation-delay(.08s)
-    animation-fill-mode(forwards)
+    @extends .surface
 
-// .tr.fx2
-//   .tc
-
-//   .tn
+.tr.fx2
+  .tc
+    @extends .surface
+  .tn
+    @extends .slide
 
 
-// Keyframes
+// A PROPOS
 // --------
 
-@keyframes lift
+.aprop 
+  @extend .cur
+  position relative
+  background-color rgba(#1a1a1a, .64)
+
+#logo
+  position absolute
+  left 100%
+  top 1.6em
+  z-index 2
+  padding 0 0 0 1.6em
+  width 7.84em
+  height 7.84em
+  background-image url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGIAAABKCAMAAAB3hHFnAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAtBQTFRF5+v//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wV6owAAAO90Uk5TAAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCYnKCkrLC0uLzAxMjM0NTY3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')
+  background-color rgba(#1a1a1a, .64)
+  background-position 68% 50%
+  background-repeat no-repeat
+
+  // FIXME: Animation starts each time the template is rendered.
+  // animation(stage_ltr .8s 0 1)
+
+  // These 3 following properties is for text replacement.
+  text-indent 800%
+  white-space nowrap
+  overflow hidden
+
+
+// KEYFRAMES FOR ANIMATIONS
+// --------
+
+@keyframes slide
   0%
     opacity 1
     transform(translateX(0))
@@ -129,7 +191,7 @@ html, body
     transform(scale(1))
 
 
-@keyframes stage
+@keyframes stage_rtl
   0% 
     opacity 0
     transform(translateX(1.6em))
@@ -137,16 +199,13 @@ html, body
     opacity 1
     transform(translateX(O))
 
-// animation-play-state: running;
-// animation-fill-mode: forwards;
 
-// Extras
-// --------
-
-#ctl 
-  position absolute
-  left 1.6em
-  top 1.6em
-  z-index 18
+@keyframes stage_ltr
+  0% 
+    opacity 0
+    transform(translateX(-1.6em))
+  100%
+    opacity 1
+    transform(translateX(O))
 
 
