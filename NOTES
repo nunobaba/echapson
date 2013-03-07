@@ -1,4 +1,8 @@
-NOTES
-----
-
-* Google Maps again.
+<script src="http://a.vimeocdn.com/js/froogaloop2.min.js"></script>
+<div class="pop">
+  <iframe 
+    src="http://player.vimeo.com/video/60149670?api=1&autoplay=1&title=0&byline=0&portrait=0" 
+    width="240" 
+    height="132" 
+    frameborder="0"></iframe>
+</div>

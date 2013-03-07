@@ -9,7 +9,12 @@
 //    <transition-property> <transition-duration> 
 //    <transition-timing-function> <transition-delay> 
 //    ], [comma separates multiple transitions]
+//    
+// ease-in-out = cubic-bezier(0.420, 0.000, 0.580, 1.000)
+// ease-in     = cubic-bezier(0.420, 0.000, 1.000, 1.000)
+// ease        = cubic-bezier(0.250, 0.100, 0.250, 1.000)
 
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:400,300")
 
 global-reset()
 
@@ -19,20 +24,44 @@ global-reset()
 // Colors
 $app_bg_color = #aaa
 
+// Parameters
+$usRollParts  = 3
+
 // Baseline grid
 $basefont = 16px
 $baseline = 1.32em
+$baseTop  = 1.6em
+
+$heightUsHeader = 7.84em
+$offsetLeftUs   = 20%
 
 // Trail card
 $heightCard = 88%
 $dur = .4s
 
 
-// EXTRAS
+// COMMONS
 // --------
 
 .cur 
   cursor pointer
+
+.rel 
+  position relative
+  left 0
+  top 0
+
+.abs-base
+  position absolute
+  top 0
+
+.abs-l
+  @extend .abs-base
+  left 0
+
+.abs-r
+  @extend .abs-base
+  right 0
 
 
 // LAYOUT
@@ -41,33 +70,29 @@ $dur = .4s
 html, body 
   width 100%
   height 100%
-  font-sans-serif(normal, $basefont, $baseline, "Open Sans")
+  background-color #888
+  font: normal $basefont/$baseline "Open Sans", Arial, sans-serif
   overflow: auto
 
 .app 
-  position absolute
-  left 0
-  top 0
+  @extend .abs-l
   width 100%
   height 100%
   overflow hidden
 
 .chrome 
-  position relative
+  @extend .rel
   left -100%
-  top 0
   width 200%
   height 100%
-  transition(left .8s)
+  transition(left .8s cubic-bezier(0.680, -0.320, 0.265, 1.320))
 
-  &.in-aprop
+  &.in-aside
     // TODO: Precisely check the size of the div.
-    left -10%
+    left -1 * $offsetLeftUs
 
-.map, .aprop 
-  position absolute
-  left 0
-  top 0
+.map, .aside 
+  @extend .abs-l
   width 50%
   height 100%
 
@@ -75,6 +100,7 @@ html, body
   left 50%
 
 #mcan 
+  @extend .rel
   width 100%
   height 100%
 
@@ -91,14 +117,13 @@ html, body
 
 .tr-wrap 
   position absolute
-  right 1.6em
-  top 1.6em
+  right $baseTop
+  top $baseTop
   width 32%
   height $heightCard
 
 .tr
-  position relative
-  top 0
+  @extend .rel
   width 100%
   height 100%
   animation(stage_rtl .8s)
@@ -138,34 +163,117 @@ html, body
     @extends .slide
 
 
-// A PROPOS
+// SIDE PANEL
 // --------
 
-.aprop 
-  @extend .cur
+.aside 
   position relative
   background-color rgba(#1a1a1a, .64)
 
 #logo
-  position absolute
+  @extend .cur
+  @extend .abs-l
   left 100%
-  top 1.6em
+  top $baseTop
   z-index 2
   padding 0 0 0 1.6em
   width 7.84em
-  height 7.84em
+  height $heightUsHeader
   background-image url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGIAAABKCAMAAAB3hHFnAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAtBQTFRF5+v//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wV6owAAAO90Uk5TAAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCYnKCkrLC0uLzAxMjM0NTY3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')
   background-color rgba(#1a1a1a, .64)
   background-position 68% 50%
   background-repeat no-repeat
-
-  // FIXME: Animation starts each time the template is rendered.
-  // animation(stage_ltr .8s 0 1)
-
   // These 3 following properties is for text replacement.
   text-indent 800%
   white-space nowrap
   overflow hidden
+
+.us 
+  @extend .rel
+  left $offsetLeftUs
+  width 100% - $offsetLeftUs
+  height 100%
+
+.us-hdr 
+  $offsetLeft = 4%
+
+  @extend .abs-l
+  left $offsetLeft
+  top $baseTop
+  z-index 4
+  box-sizing(border-box)
+  padding $baseTop
+  padding-left 2 * $baseTop
+  width 100% - $offsetLeft
+  height $heightUsHeader
+  background-color rgba(#111, .8)
+  color #fff
+
+  h2 
+    padding-top .2em
+    padding-bottom .56em
+    font-size 2.16em
+
+.us-stt 
+  span 
+    display inline-block
+
+  span:not(:first-child)
+    visibility hidden
+
+  em
+    font-size 1.36em
+
+.us-nav
+  $bullSize       = .425em
+  $bullMargin     = .64em
+
+  @extend .abs-r
+  right 2 * $baseTop
+  top 50%
+  margin-top -0.5 * ($usRollParts * $bullSize + 2 * $bullMargin)
+
+  [class*="btn"]
+    display block
+    margin-top $bullMargin
+    margin-bottom $bullMargin
+    margin-right 2.5 * $bullSize
+    width 2.5 * $bullSize
+    height $bullSize
+    border-radius .4em
+    background-color rgba(#fff, .4)
+
+    &.on 
+      margin-right 0
+      width 5 * $bullSize
+
+  [class*="btn"]:first-child,
+  [class*="btn"]:last-child
+    margin 0
+
+.us-roll
+  @extend .rel
+  width 100%
+  height $usRollParts * 100%
+  transition(top .8s)
+
+  [class*="sec"]
+    width 100%
+    height 100% * (1 / $usRollParts)
+    background-color red
+
+    &:first-child
+      background-image url("//www.publicdomainpictures.net/pictures/20000/velka/subway-car.jpg")
+
+  &.to-sec-1
+    top 0
+
+  &.to-sec-2
+    top -100%
+
+  &.to-sec-3
+    top -200%
+
 
 
 // KEYFRAMES FOR ANIMATIONS

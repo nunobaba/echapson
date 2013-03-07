@@ -1,0 +1,28 @@
+<head>
+  <title>Echapson-M</title>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script>
+</head>
+
+<body>
+  {{> app}} {{! Application}}
+</body>
+
+
+<template name="app">
+  <div class="app">
+    <div class="chrome ani {{page}}">
+
+      <div class="map">
+        {{#constant}}<div id="mcan"></div>{{/constant}}
+        {{> trail}}
+      </div> 
+
+      <div class="aside">
+        <div id="logo" class="ins">
+          <h1>L'Echapp&eacute;e Sonore</h1>
+        </div>
+        {{> aside}}
+      </div>
+    </div>
+  </div>
+</template>

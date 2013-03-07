@@ -2,6 +2,8 @@
 # Echapson V1
 # ================
 
+# The current trail 
+# @type {object}
 Session.set "trail", {}
 
 
@@ -10,14 +12,14 @@ Session.set "trail", {}
 Meteor.Router.add 
   "/": -> 
     # Todo - Find the last element.
-    Session.set "trail", id: 1
+    Session.set "trail", id: 1, pos: 0
     "trail"
 
-  "/a": ->
-    "aprop"
+  "/nous": ->
+    "aside"
 
-  "/t:rId": (rId) -> 
-    Session.set "trail", id: rId
+  "/trail/:tid/:pos": (tid, pos) -> 
+    Session.set "trail", id: +tid, pos: +pos
     "trail"
 
 
@@ -32,6 +34,8 @@ Handlebars.registerHelper "section", (it) ->
 
 # ---- TPL: APPLICATION ----
 
+# The Google Map singleton
+# @type {google.maps.Map} 
 Template.app._map = null
 
 Template.app.preserve [".ani.chrome", "#logo", ".ani.chrome #mcan"]
@@ -42,7 +46,7 @@ Template.app.helpers
     if _p then "in-#{_p}" else ""
 
 Template.app.rendered = ->
-  if !Template.app._map
+  if not Template.app._map
     Template.app._map = new google.maps.Map (@find "#mcan"), 
       center: new google.maps.LatLng 30, 20
       disableDefaultUI: true
@@ -58,7 +62,13 @@ Template.app.rendered = ->
 
 Template.app.events
   "click #logo": (e, tpl) ->
-    Meteor.Router.to "/a"
+    _r = "/nous"
+    if "aside" == Meteor.Router.page()
+      _t = Session.get "trail"
+      _r = if _t.id? then "/trail/#{_t.id}/#{_t.pos}" else "/"
+
+    Meteor.Router.to _r
+
 
 
 # ---- TPL: TRAIL ----
@@ -85,13 +95,7 @@ Template.trail.helpers
 
 # ---- TPL: A PROPOS ----
 
-# Template.aprop.helpers
+# Template.aside.helpers
 
 
 
-# ---- TPL: BUTTONS ----
-
-Template.controls.events
-  "keyup": (e, tpl) ->
-    if e.keyCode == 13
-      Meteor.Router.to "/" + (tpl.find "#path").value
