@@ -215,14 +215,23 @@ html, body
     font-size 2.16em
 
 .us-stt 
-  span 
-    display inline-block
+  $subtitleFontSize = 1.36em
 
-  span:not(:first-child)
-    visibility hidden
+  display inline-block
+  height 1.5 * $subtitleFontSize
+  overflow hidden
+
+  [class*="sec"]
+    display block
+    height 1.5 * $subtitleFontSize
 
   em
-    font-size 1.36em
+    font-size $subtitleFontSize
+
+.us-stt-roll
+  @extend .rel
+  height $usRollParts * 100%
+  transition(transform .8s)
 
 .us-nav
   $bullSize       = .425em
@@ -237,42 +246,51 @@ html, body
     display block
     margin-top $bullMargin
     margin-bottom $bullMargin
-    margin-right 2.5 * $bullSize
+    margin-left 2.5 * $bullSize
     width 2.5 * $bullSize
     height $bullSize
     border-radius .4em
     background-color rgba(#fff, .4)
 
     &.on 
-      margin-right 0
+      margin-left 0
       width 5 * $bullSize
 
   [class*="btn"]:first-child,
   [class*="btn"]:last-child
-    margin 0
+    margin-top 0
+    margin-bottom 0
 
 .us-roll
   @extend .rel
   width 100%
   height $usRollParts * 100%
-  transition(top .8s)
+  transition(transform .8s)
 
   [class*="sec"]
     width 100%
     height 100% * (1 / $usRollParts)
-    background-color red
 
     &:first-child
       background-image url("//www.publicdomainpictures.net/pictures/20000/velka/subway-car.jpg")
 
-  &.to-sec-1
-    top 0
+.to-sec-1 
+  .us-roll
+    transform(translateY(0))
+  .us-stt-roll
+    transform(translateY(0))
 
-  &.to-sec-2
-    top -100%
+.to-sec-2 
+  .us-roll
+    transform(translateY((-1/$usRollParts) * 100%))
+  .us-stt-roll
+    transform(translateY((-1/$usRollParts) * 100%))
 
-  &.to-sec-3
-    top -200%
+.to-sec-3 
+  .us-roll
+    transform(translateY((-2/$usRollParts) * 100%))
+  .us-stt-roll
+    transform(translateY((-2/$usRollParts) * 100%))
 
 
 
