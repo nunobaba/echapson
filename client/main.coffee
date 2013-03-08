@@ -3,24 +3,36 @@
 # ================
 
 # The current trail 
-# @type {object}
+# @type {Object}
 Session.set "trail", {}
+
+# The current aside section. 
+# There might be multiple sections in the future, so the 
+# object contains an id property to distinguish them all.
+# @type {Object}
+Session.set "aside", {}
 
 
 # ---- CLIENT ----
 
 Meteor.Router.add 
-  "/": -> 
-    # Todo - Find the last element.
-    Session.set "trail", id: 1, pos: 0
-    "trail"
+  "/aprop/:part": (part) ->
+    Session.set "aside", id: "aprop", part: part
+    "aside"
 
-  "/nous": ->
+  "/aprop": ->
+    Session.set "aside", id: "aprop", part: "proj"
     "aside"
 
   "/trail/:tid/:pos": (tid, pos) -> 
     Session.set "trail", id: +tid, pos: +pos
     "trail"
+
+  "*": -> 
+    # TODO: The default route should be the last published element.
+    Session.set "trail", id: 1, pos: 0
+    "trail"
+
 
 
 
@@ -30,6 +42,9 @@ Meteor.Router.add
 Handlebars.registerHelper "section", (it) -> 
   it == Meteor.Router.page() 
 
+# Handlebars.registerHelper "iter", (ctx) ->
+#   if ctx?.length 
+#     ctx.reduce (acc, v, k) -> acc + _fn _.extend {}, val: v, index: k
 
 
 # ---- TPL: APPLICATION ----
@@ -62,7 +77,7 @@ Template.app.rendered = ->
 
 Template.app.events
   "click #logo": (e, tpl) ->
-    _r = "/nous"
+    _r = "/aprop"
     if "aside" == Meteor.Router.page()
       _t = Session.get "trail"
       _r = if _t.id? then "/trail/#{_t.id}/#{_t.pos}" else "/"
@@ -73,7 +88,7 @@ Template.app.events
 
 # ---- TPL: TRAIL ----
 
-Template.trail._hist = null
+Template.trail._cur = null
 
 Template.trail._fx = null
 
@@ -82,8 +97,8 @@ Template.trail.preserve [".ani.tr"]
 Template.trail.helpers
   fx: -> 
     _t = Session.get "trail"
-    if _t.id? && _t.id != Template.trail._hist 
-      Template.trail._hist = _t.id
+    if _t.id? && _t.id != Template.trail._cur 
+      Template.trail._cur = _t.id
       Template.trail._fx = 
         switch Template.trail._fx
           when "fx2" then "fx1"
@@ -95,7 +110,17 @@ Template.trail.helpers
 
 # ---- TPL: A PROPOS ----
 
-# Template.aside.helpers
+Template.aside.$$ = {}
 
+Template.aside.preserve [".ani.us-roll", ".ani.us-stt-roll"]
 
+Template.aside.helpers
+  pos: ->
+    _p = Session.get "aside"
+    Template.aside.$$.part = _p.part unless not _p.part
+    "to-#{_p.part}" unless not _p.part
+
+Template.aside.events
+  "click .us-nav [class*='btn']": (e, tpl) ->
+    Meteor.Router.to "/aprop/#{e.target.classList.item(1)}"
 

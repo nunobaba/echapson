@@ -26,6 +26,8 @@ $app_bg_color = #aaa
 
 // Parameters
 $usRollParts  = 3
+$usBullSize   = .425em
+$usBullMargin = .64em
 
 // Baseline grid
 $basefont = 16px
@@ -234,27 +236,24 @@ html, body
   transition(transform .8s)
 
 .us-nav
-  $bullSize       = .425em
-  $bullMargin     = .64em
-
   @extend .abs-r
   right 2 * $baseTop
   top 50%
-  margin-top -0.5 * ($usRollParts * $bullSize + 2 * $bullMargin)
+  margin-top -0.5 * ($usRollParts * $usBullSize + 2 * $usBullMargin)
 
   [class*="btn"]
+    @extend .cur
     display block
-    margin-top $bullMargin
-    margin-bottom $bullMargin
-    margin-left 2.5 * $bullSize
-    width 2.5 * $bullSize
-    height $bullSize
+    margin-top $usBullMargin
+    margin-bottom $usBullMargin
+    margin-left 2.5 * $usBullSize
+    width 2.5 * $usBullSize
+    height $usBullSize
     border-radius .4em
     background-color rgba(#fff, .4)
 
-    &.on 
-      margin-left 0
-      width 5 * $bullSize
+    &:hover 
+      background-color #fff
 
   [class*="btn"]:first-child,
   [class*="btn"]:last-child
@@ -274,19 +273,28 @@ html, body
     &:first-child
       background-image url("//www.publicdomainpictures.net/pictures/20000/velka/subway-car.jpg")
 
-.to-sec-1 
+.to-proj
+  .us-nav-btn.proj
+    margin-left 0
+    width 5 * $usBullSize
   .us-roll
     transform(translateY(0))
   .us-stt-roll
     transform(translateY(0))
 
-.to-sec-2 
+.to-nous
+  .us-nav-btn.nous
+    margin-left 0
+    width 5 * $usBullSize
   .us-roll
     transform(translateY((-1/$usRollParts) * 100%))
   .us-stt-roll
     transform(translateY((-1/$usRollParts) * 100%))
 
-.to-sec-3 
+.to-comm
+  .us-nav-btn.comm
+    margin-left 0
+    width 5 * $usBullSize
   .us-roll
     transform(translateY((-2/$usRollParts) * 100%))
   .us-stt-roll
