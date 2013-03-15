@@ -2,6 +2,8 @@
 # Echapson V1
 # ================
 
+Meteor.subscribe "trails"
+
 # The current trail 
 # @type {Object}
 Session.set "trail", {}
@@ -13,7 +15,7 @@ Session.set "trail", {}
 Session.set "aside", {}
 
 
-# ---- CLIENT ----
+### Route navigation ###
 
 Meteor.Router.add 
   "/aprop/:part": (part) ->
@@ -36,24 +38,25 @@ Meteor.Router.add
 
 
 
-# ---- TPL: COMMONS ----
-
+### Handlebars helper functions ###
 
 Handlebars.registerHelper "section", (it) -> 
   it == Meteor.Router.page() 
 
-# Handlebars.registerHelper "iter", (ctx) ->
-#   if ctx?.length 
-#     ctx.reduce (acc, v, k) -> acc + _fn _.extend {}, val: v, index: k
 
-
-# ---- TPL: APPLICATION ----
+### Template: Application ###
 
 # The Google Map singleton
 # @type {google.maps.Map} 
 Template.app._map = null
 
-Template.app.preserve [".ani.chrome", "#logo", ".ani.chrome #mcan"]
+# Polylines and markers.
+# @type {Object}
+Template.app.$$ = 
+  plines: []
+
+Template.app.preserve [
+  ".ani.chrome", "#logo", ".ani.chrome #mcan"]
 
 Template.app.helpers
   page: -> 
@@ -61,6 +64,8 @@ Template.app.helpers
     if _p then "in-#{_p}" else ""
 
 Template.app.rendered = ->
+  _mstyle = Session.get "map.style"
+
   if not Template.app._map
     Template.app._map = new google.maps.Map (@find "#mcan"), 
       center: new google.maps.LatLng 30, 20
@@ -68,12 +73,44 @@ Template.app.rendered = ->
       mapTypeId: google.maps.MapTypeId.ROADMAP
       maxZoom: 5
       minZoom: 3
-      styles: Session.get "mapstyle"
+      styles: _mstyle.map
       zoom: 3
       zoomControl: true
       zoomControlOptions: 
         position: google.maps.ControlPosition.LEFT_BOTTOM
         style: google.maps.ZoomControlStyle.SMALL
+
+    cursor = Trails.find()
+    _LatLng = google.maps.LatLng
+    _Marker = google.maps.Marker
+    _Polyline = google.maps.Polyline
+
+    # Trail paths are rendered as they arrive in the cursor.
+    cursor.observe added: (tr) -> 
+      pl = new _Polyline _mstyle.polyline.reg
+      pl.id = tr.id
+      pl.setMap Template.app._map
+      pl.setPath tr.coords.map (latlng) -> 
+        # Ensure only single markers are created. Those at the 
+        # crossing of multiple polylines are just pulled from 
+        # cache.
+        markerId = latlng.toString()
+        m = if markerId not of Template.app.$$
+          new _Marker 
+            id: latlng.toString()
+            icon: _mstyle.marker.reg
+            position: new _LatLng latlng[0], latlng[1]
+            includes: []
+            map: Template.app._map
+        else
+          Template.app.$$[markerId]
+        m.includes.push pl.id
+        m.getPosition()
+      # Cache polylines.
+      Template.app.$$[pl.id] = pl
+      Template.app.$$.plines.push pl.id
+    
+
 
 Template.app.events
   "click #logo": (e, tpl) ->
@@ -86,7 +123,7 @@ Template.app.events
 
 
 
-# ---- TPL: TRAIL ----
+### Template: Trail Panel ###
 
 Template.trail._cur = null
 
@@ -108,7 +145,7 @@ Template.trail.helpers
       Template.trail._fx
 
 
-# ---- TPL: A PROPOS ----
+### Template: Aside ###
 
 Template.aside.$$ = {}
 

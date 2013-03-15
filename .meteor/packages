@@ -7,7 +7,6 @@ coffeescript
 less
 preserve-inputs
 insecure
-autopublish
 page-js-ie-support
 router
 HTML5-History-API
